@@ -12,7 +12,7 @@ public class EnemySpawner : MonoBehaviour
     // Amount of Enemies Multiplier
     private int AOE = 1;
     private int AOEIncrement = 1;
-    private float AOEInterval = 60f;
+    private float AOEInterval = 30f;
 
     // Difficulty of Enemies Multiplier
     private int DOE = 1;
