@@ -52,7 +52,7 @@ public class Bullet : MonoBehaviour
             enemy.TakeDamage(bulletDamage);
         }
         
-        if (hitInfo.gameObject.layer != 6 && hitInfo.gameObject.layer != 8) {
+        if (hitInfo.gameObject.layer != 6 && hitInfo.gameObject.layer != 8 && hitInfo.gameObject.layer != 9) {
             anim.SetTrigger("hit");
             rb.velocity = new Vector2(0f, 0f);
             // DestroyBullet();

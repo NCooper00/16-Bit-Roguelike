@@ -10,9 +10,13 @@ public class DamageUp : MonoBehaviour
     private GameObject player;
     private Player playerScript;
 
+    public AudioManager audio;
+
     // Start is called before the first frame update
     void Awake()
     {
+        audio = FindObjectOfType<AudioManager>().GetComponent<AudioManager>();
+
         player = GameObject.Find("PLAYER");
         playerScript = player.GetComponent<Player>();
 
@@ -30,6 +34,7 @@ public class DamageUp : MonoBehaviour
 
         if (player != null) {
             player.IncreaseDamage(Damage);
+            audio.PlayFull("Coin");
             DestroyObject();
         }
 

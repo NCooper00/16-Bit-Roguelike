@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]
     private GameObject DamageUp;
+    [SerializeField]
+    private GameObject Coin;
 
     private EnemySpawner SPAWNER;
 
@@ -147,7 +149,7 @@ public class Enemy : MonoBehaviour
         // anim.SetBool("dead", true);
         // anim.SetBool("flying", false);
         DestroyObject();
-        SpawnBuff(currentPos, DamageUp);
+        SpawnBuff(currentPos, Coin);
     }
 
     void SpawnBuff(Vector3 position, GameObject buff) {
