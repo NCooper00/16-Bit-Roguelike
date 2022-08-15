@@ -124,7 +124,10 @@ GameObject:
   - component: {fileID: 7534290247788138359}
   - component: {fileID: 4165564336934129802}
   - component: {fileID: 912392117689415961}
-  - component: {fileID: 1285292603}
+  - component: {fileID: 2113081513275477300}
+  - component: {fileID: 3082522199227530443}
+  - component: {fileID: 1935186092304436225}
+  - component: {fileID: 442146411857724588}
   m_Layer: 7
   m_Name: SkeletonOne
   m_TagString: Untagged
@@ -254,10 +257,46 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 1}
+  m_Offset: {x: -0.18942833, y: -0.039246917}
+  m_Size: {x: 0.4728241, y: 0.8555863}
   m_Direction: 0
---- !u!114 &1285292603
+--- !u!58 &2113081513275477300
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7534290247788138356}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 1
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
+--- !u!250 &3082522199227530443
+PointEffector2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7534290247788138356}
+  m_Enabled: 1
+  m_UseColliderMask: 1
+  m_ColliderMask:
+    serializedVersion: 2
+    m_Bits: 128
+  m_ForceMagnitude: 5
+  m_ForceVariation: 0
+  m_DistanceScale: 1
+  m_ForceSource: 0
+  m_ForceTarget: 0
+  m_ForceMode: 0
+  m_Drag: 0
+  m_AngularDrag: 0
+--- !u!114 &1935186092304436225
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -266,16 +305,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 7534290247788138356}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dd8e07b0ef0bb249a47bbe4ef538bed, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f18714fa24dbc94a856471e3d64c118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 7534290247788138359}
+  Health: 100
   player: {fileID: 7240768693079139707, guid: e65278d1352d3984b9782676303d5488, type: 3}
   DamageUp: {fileID: 1308883842644354278, guid: 2778aded28fa2064492f305f47b57ddb, type: 3}
   Coin: {fileID: 4482161521412857406, guid: 83efae7a412162541aae0f9a3e7183e1, type: 3}
-  aggroRange: 18
-  Health: 100
+--- !u!114 &442146411857724588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7534290247788138356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 120dc0bc5c539184084f88b2042913b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7240768693079139707, guid: e65278d1352d3984b9782676303d5488, type: 3}
+  enemy: {fileID: 1935186092304436225}
+  aggroRange: 15
+  Speed: 4
   Damage: 15
-  Speed: 3.5
-  offset: 0
   damageIntervalReset: 0.5

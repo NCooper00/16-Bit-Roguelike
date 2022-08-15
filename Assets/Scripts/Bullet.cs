@@ -17,6 +17,8 @@ public class Bullet : MonoBehaviour
 
     private int bulletDamage;
 
+    private bool hasHit;
+
     public Rigidbody2D rb;
     public Animator anim;
 
@@ -30,6 +32,8 @@ public class Bullet : MonoBehaviour
         bulletDamage = playerScript.weaponDamage;
         // audio = FindObjectOfType<AudioManager>().GetComponent<AudioManager>();
         bulletLifeReset += bulletLife;
+
+        hasHit = false;
     }
 
     void Start()
@@ -46,18 +50,21 @@ public class Bullet : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo) {
-        Enemy enemy = hitInfo.GetComponent<Enemy>();
 
-        if (enemy != null) {
-            enemy.TakeDamage(bulletDamage);
-        }
-        
-        if (hitInfo.gameObject.layer != 6 && hitInfo.gameObject.layer != 8 && hitInfo.gameObject.layer != 9) {
-            anim.SetTrigger("hit");
-            rb.velocity = new Vector2(0f, 0f);
-            // DestroyBullet();
-            // audio.PlayFull("TurretShotImpact");
-            bulletDamage = 0;
+        if (!hasHit) {        
+
+            Enemy enemy = hitInfo.GetComponent<Enemy>();
+
+            if (enemy != null) {
+                enemy.TakeDamage(bulletDamage);
+            }
+            
+            if (hitInfo.gameObject.layer != 0 && hitInfo.gameObject.layer != 6 && hitInfo.gameObject.layer != 8 && hitInfo.gameObject.layer != 9 && hitInfo.gameObject.layer != 10) {
+                hasHit = true;
+                anim.SetTrigger("hit");
+                rb.velocity = new Vector2(0f, 0f);
+            }
+
         }
 
     }

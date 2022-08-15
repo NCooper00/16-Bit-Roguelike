@@ -41,7 +41,6 @@ public class Weapon : MonoBehaviour
 
         CurrentTime += Time.deltaTime;
         // Debug.Log(timeSinceLastShot);
-        Debug.Log(CurrentTime - timeSinceLastShot);
 
         if (fireRate != 0) {
             fireRate -= Time.deltaTime;

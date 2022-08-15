@@ -36,6 +36,11 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float vampireInterval = 10f;
 
+    [SerializeField]
+    private GameObject reaperPrefab;
+    [SerializeField]
+    private float reaperInterval = 300f;
+
     void Awake() {
         player = GameObject.Find("PLAYER");
         playerPos = player.GetComponent<Transform>();
@@ -50,6 +55,7 @@ public class EnemySpawner : MonoBehaviour
 
         StartCoroutine(spawnEnemy(skeleton1Interval, skeleton1Prefab));
         StartCoroutine(spawnEnemy(vampireInterval, vampirePrefab));
+        StartCoroutine(spawnEnemy(reaperInterval, reaperPrefab));
     }
 
     // Update is called once per frame
@@ -60,6 +66,7 @@ public class EnemySpawner : MonoBehaviour
             MaxEnemyReached = false;
             StartCoroutine(spawnEnemy(skeleton1Interval, skeleton1Prefab));
             StartCoroutine(spawnEnemy(vampireInterval, vampirePrefab));
+            StartCoroutine(spawnEnemy(reaperInterval, reaperPrefab));
         }
     }
 

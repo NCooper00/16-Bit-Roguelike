@@ -31,13 +31,12 @@ public class Player : MonoBehaviour
     public Animator anim;
     public AudioManager audio;
 
-    private GameObject coinUI;
+    public GameObject coinUI;
     private CoinUI coinUIScript;
 
     void Awake() {
         audio = FindObjectOfType<AudioManager>().GetComponent<AudioManager>();
 
-        coinUI = GameObject.Find("Coin");
         coinUIScript = coinUI.GetComponent<CoinUI>();
     }
 
