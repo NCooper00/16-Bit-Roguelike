@@ -6,25 +6,33 @@ public class Player : MonoBehaviour
 {
 
     [SerializeField]
-    private int MaxHealth = 1000;
-    private int Health = 1000;
+    private float MaxHealth = 1000;
+    [SerializeField]
+    private float Health = 1000;
 
     public int enemiesKilled;
-    public int damageDealt;
-    public int damageTaken;
+    public float damageDealt;
+    public float damageTaken;
     public int consumablesCollected;
     public int Coins = 0;
 
     public int weaponDamage = 10;
 
     public float moveSpeed = 4f;
+    public float sprintSpeed = 6f;
+    public float gotHitSpeed = 2f;
     private float moveSpeedReset;
-    public float sprintMultiplier = 1.25f;
+    public float currentSpeed;
+
+    public float gotHitSpeedDelay = 1.5f;
+    private float gotHitSpeedDelayReset;
 
     private float directionX;
     private float directionY;
 
     private bool facingRight = true;
+    public bool Attacking = false;
+    public bool gotHit = false;
 
     public Rigidbody2D rb;
 
@@ -34,16 +42,21 @@ public class Player : MonoBehaviour
     public GameObject coinUI;
     private CoinUI coinUIScript;
 
+    [SerializeField]
+    private Weapon weapon;
+
     void Awake() {
         audio = FindObjectOfType<AudioManager>().GetComponent<AudioManager>();
 
         coinUIScript = coinUI.GetComponent<CoinUI>();
+
+        gotHitSpeedDelayReset = gotHitSpeedDelay;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        moveSpeedReset = moveSpeed;
+        currentSpeed = moveSpeed;
 
         enemiesKilled = 0;
         damageDealt = 0;
@@ -55,9 +68,13 @@ public class Player : MonoBehaviour
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.LeftShift)) {
-            moveSpeed = moveSpeed * sprintMultiplier;
+            if (!Attacking && !gotHit) {
+                ChangeSpeed(sprintSpeed);
+            }
         } else if (Input.GetKeyUp(KeyCode.LeftShift)) {
-            moveSpeed = moveSpeedReset;
+            if (!Attacking && !gotHit) {
+                ChangeSpeed(moveSpeed);
+            }
         }
     }
 
@@ -66,13 +83,25 @@ public class Player : MonoBehaviour
         directionX = Input.GetAxis("Horizontal");
         directionY = Input.GetAxis("Vertical");
 
-        rb.velocity = new Vector2(moveSpeed * directionX, moveSpeed * directionY);
+        Vector3 moveDir = new Vector3(directionX, directionY);
 
-        // if (rb.velocity.x != 0) {
-        //     anim.SetBool("Move", true);
-        // } else {
-        //     anim.SetBool("Move", false);
-        // }
+        if (moveDir.sqrMagnitude > 1) {
+            moveDir.Normalize();
+        }
+
+        rb.velocity = moveDir * currentSpeed;
+        // rb.velocity = new Vector2(currentSpeed * directionX, currentSpeed * directionY).normalized;
+
+        if (gotHit) {
+            ChangeSpeed(gotHitSpeed);
+
+            gotHitSpeedDelay -= Time.deltaTime;
+
+            if (gotHitSpeedDelay <= 0) {
+                gotHit = false;
+                gotHitSpeedDelay = gotHitSpeedDelayReset;
+            }
+        }
 
         if (directionX != 0 || directionY != 0) {
             anim.SetBool("Run", true);
@@ -80,11 +109,24 @@ public class Player : MonoBehaviour
             anim.SetBool("Run", false);
         }
 
-        if (facingRight == false && directionX > 0) {
-            Flip();
-        }else if (facingRight == true && directionX < 0) {
-            Flip();
+        if (!Attacking) {
+            if (!facingRight && directionX > 0) {
+                Flip();
+            } else if (facingRight && directionX < 0) {
+                Flip();
+            }
+        } else if (Attacking) {
+            Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(transform.position);
+            if (!facingRight && Input.mousePosition.x > playerScreenPos.x) {
+                Flip();
+            } else if (facingRight && Input.mousePosition.x < playerScreenPos.x) {
+                Flip();
+            }
         }
+    }
+
+    public void ChangeSpeed(float speed) {
+        currentSpeed = speed;
     }
 
     void Flip() {
@@ -92,6 +134,15 @@ public class Player : MonoBehaviour
         facingRight = !facingRight;
         transform.Rotate(0f, 180f, 0f);
 
+    }
+
+    public void Attack() {
+        weapon.Attack();
+    }
+
+    public void StopAttack() {
+        Attacking = false;
+        ChangeSpeed(moveSpeed);
     }
 
     public void IncreaseDamage(int Damage) {
@@ -103,12 +154,16 @@ public class Player : MonoBehaviour
         coinUIScript.UpdateCoins(Coins);
     }
 
-    public void TakeDamage(int damage) {
-        Health -= damage;
+    public void TakeDamage(AttackDetails attackDetails) {
+
+        if (Attacking) {
+            Attacking = false;
+        }
+
+        Health -= attackDetails.damageAmount;
         anim.SetTrigger("Hit");
 
-        damageTaken += damage;
-        // CameraShaker.Instance.ShakeOnce(4f, 2f, .1f, 1f);
+        damageTaken += attackDetails.damageAmount;
 
         if (Health <= 0) {
             Die();
@@ -119,11 +174,12 @@ public class Player : MonoBehaviour
         Debug.Log("Am Ded");
     }
 
-    public int ReturnHealth() {
+    public float ReturnHealth() {
         return Health;
     }
 
     public void PlayStepSound() {
         audio.PlayFull("PlayerStep");
     }
+
 }

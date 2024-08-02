@@ -7,29 +7,36 @@ public class Enemy : MonoBehaviour
     public Animator anim;
     private Rigidbody2D rb;
 
+    [HideInInspector]
+    public int maxHealth;
     public int Health = 100;
 
     [SerializeField]
+    private GameObject DeathDrop;
+
+    private Collider2D collider;
+
     private GameObject player;
     private Player playerScript;
     private Transform playerPos;
 
-    private EnemySpawner SPAWNER;
+    public bool Dead = false;
 
-    [SerializeField]
-    private GameObject DamageUp;
-    [SerializeField]
-    private GameObject Coin;
-
-    private Vector3 currentPos;
+    public Vector3 currentPos;
 
     void Awake()
     {
+
         player = GameObject.Find("PLAYER");
         playerScript = player.GetComponent<Player>();
         playerPos = player.GetComponent<Transform>();
 
-        SPAWNER = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+    }
+
+    void Start() {
+        collider = GetComponent<Collider2D>();
+
+        maxHealth = Health;
     }
 
     void FixedUpdate() {
@@ -47,8 +54,24 @@ public class Enemy : MonoBehaviour
     }
 
     void Die() {
-        SpawnBuff(currentPos, Coin);
-        DestroyObject();
+        Health = 0;
+        // SpawnBuff(currentPos, Coin);
+        Dead = true;
+        anim.SetBool("Dead", true);
+        anim.SetTrigger("Die");
+        ToggleCollider();
+    }
+
+    public void Bleed() {
+        SpawnDeathDrop(currentPos, DeathDrop);
+    }
+
+    public void ToggleCollider() {
+        collider.enabled = !collider.enabled;
+    }
+
+    void SpawnDeathDrop(Vector3 position, GameObject deathDrop) {
+        GameObject newDeathDrop = Instantiate(deathDrop, position, Quaternion.identity);
     }
 
     void SpawnBuff(Vector3 position, GameObject buff) {
@@ -56,12 +79,7 @@ public class Enemy : MonoBehaviour
     }
 
     public void DestroyObject() {
-        SPAWNER.currentEnemyCount--;
         playerScript.enemiesKilled++;
         Destroy(gameObject);
-    }
-
-    public void Relocate() {
-        transform.position = new Vector3(Random.Range(-30f, 30f) + (playerPos.position.x), Random.Range(-30f, 30f) + (playerPos.position.y), 0);
     }
 }

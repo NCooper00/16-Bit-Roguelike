@@ -5,71 +5,36 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
 
+    [SerializeField]
+    private Player player;
+
+    public float FiringMoveSpeed = 1.5f;
+
     public Transform firePoint;
 
     public GameObject bulletPrefab;
-    // public AudioManager audio;
-
-    // public Animator anim;
-
-    public float fireRate = 0.25f;
-    private float fireRateReset;
-
-    private float timeSinceLastShot;
-
-    private float CurrentTime;
-
+    public AudioManager audio;
     
     void Awake() {
-        fireRateReset += fireRate;
-        // audio = FindObjectOfType<AudioManager>().GetComponent<AudioManager>();
+        audio = FindObjectOfType<AudioManager>().GetComponent<AudioManager>();
 
-        // hasNotShot = true;
-
-    }
-
-    void Start() {
-        timeSinceLastShot = Time.time;
     }
 
     void FixedUpdate() {
 
-        // if (hasNotShot && Input.GetMouseButton(0)) {
-        //     Shoot();
-        //     hasNotShot = false;
-        // }
-
-        CurrentTime += Time.deltaTime;
-        // Debug.Log(timeSinceLastShot);
-
-        if (fireRate != 0) {
-            fireRate -= Time.deltaTime;
-            
-            if (fireRate <= 0) {
-                fireRate = 0;
-            }
+        if (Input.GetMouseButton(0) && !player.Attacking) {
+            BeginAttack();
         }
 
-        if (Input.GetMouseButton(0) && fireRate == 0) {
-
-            // if (fireRate == fireRateReset) {
-                Shoot();
-                fireRate = fireRateReset;
-            // }
-            
-        } 
-        // else if (!Input.GetMouseButton(0)) {
-        
-        //     // fireRate = fireRateReset;
-        //     // anim.SetBool("shooting", false);
-        //     // hasNotShot = true;
-        // }
     }
 
-    void Shoot() {
-        // audio.Play("TurretShot");
-        // anim.SetBool("shooting", true);
-        timeSinceLastShot += Time.deltaTime;
+    void BeginAttack() {
+            player.ChangeSpeed(FiringMoveSpeed);
+            player.Attacking = true;
+            player.anim.SetTrigger("Attacking");
+    }
+
+    public void Attack() {
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
     }
 }

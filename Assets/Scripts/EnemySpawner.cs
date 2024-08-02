@@ -20,6 +20,12 @@ public class EnemySpawner : MonoBehaviour
     // Frequency of Enemies Multiplier
     private int FOE = 1;
 
+    private Vector3 SpawnLocation;
+    private Vector3 RelocateLocation;
+
+    public Collider2D playerZoneCollider;
+    public Collider2D outerCollider;
+
     public int currentEnemyCount;
     public int maxEnemyCount;
     private int maxEnemiesStart;
@@ -72,8 +78,7 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator spawnEnemy(float interval, GameObject enemy) {
         yield return new WaitForSeconds(interval);
-        GameObject newEnemy = Instantiate(enemy, new Vector3(Random.Range(-30f, 30f) + (playerPos.position.x), Random.Range(-30f, 30f) + (playerPos.position.y), 0), Quaternion.identity);
-        currentEnemyCount++;
+        FindSpawnLocation(enemy);
 
         if (currentEnemyCount <= maxEnemyCount && !MaxEnemyReached) {
             StartCoroutine(spawnEnemy(interval, enemy));
@@ -92,11 +97,54 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void OnTriggerExit2D(Collider2D objectInfo) {
-        Enemy enemy = objectInfo.GetComponent<Enemy>();
+    void FindSpawnLocation(GameObject enemy) {
+        SpawnLocation = new Vector3(Random.Range(-30f, 30f) + (playerPos.position.x), Random.Range(-30f, 30f) + (playerPos.position.y), 0);
 
-        if (enemy != null) {
-            enemy.Relocate();
+        if (!CheckIfTooClose(SpawnLocation)) {
+            EnemySpawn(SpawnLocation, enemy);
+        } else {
+            FindSpawnLocation(enemy);
+        }
+    }
+
+    bool CheckIfTooClose(Vector3 newPos) {
+        if (playerZoneCollider.bounds.Contains(newPos)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    void EnemySpawn(Vector3 spawnSpot, GameObject enemy) {
+        GameObject newEnemy = Instantiate(enemy, SpawnLocation, Quaternion.identity);
+        currentEnemyCount++;
+    }
+
+    void FindRelocateLocation(Enemy enemy) {
+        RelocateLocation = new Vector3(Random.Range(-30f, 30f) + (playerPos.position.x), Random.Range(-30f, 30f) + (playerPos.position.y), 0);
+
+        if (!CheckIfTooClose(RelocateLocation)) {
+            EnemyRelocate(RelocateLocation, enemy);
+        } else {
+            FindRelocateLocation(enemy);
+        }
+    }
+
+    void EnemyRelocate(Vector3 relocateSpot, Enemy enemy) {
+
+        enemy.currentPos = relocateSpot;
+
+    }
+
+    void OnTriggerExit2D(Collider2D objectInfo) {
+        if (objectInfo.GetComponent<Collider>() == outerCollider) {
+
+            Enemy enemy = objectInfo.GetComponent<Enemy>();
+
+            if (enemy != null) {
+                FindRelocateLocation(enemy);
+            }
+
         }
 
     }

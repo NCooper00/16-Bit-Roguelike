@@ -20,14 +20,6 @@ public class CursorFollow : MonoBehaviour
         playerPos = player.GetComponent<Transform>();
     }
 
-    private void Start() {
-        
-    }
-
-    private void Update() {
-        followTransform.position = playerPos.position;
-    }
-
     private void FixedUpdate() {
         Vector3 difference = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         difference.Normalize();

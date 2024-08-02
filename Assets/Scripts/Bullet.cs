@@ -53,6 +53,8 @@ public class Bullet : MonoBehaviour
 
         if (!hasHit) {        
 
+            Debug.Log(hitInfo);
+
             Enemy enemy = hitInfo.GetComponent<Enemy>();
 
             if (enemy != null) {
